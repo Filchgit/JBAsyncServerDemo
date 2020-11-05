@@ -54,13 +54,34 @@ namespace JBAsyncTCPServer
                     myTcpClients.Add(returnedByAccept);
                     //so if a new Tcp Client connects we add them to our Tcp Client List. . . . 
 
-                    Debug.WriteLine($"Client connected successfully, count {0} - {1}"
-                        ,myTcpClients.Count, returnedByAccept.Client.RemoteEndPoint);
+                    Debug.WriteLine(string.Format($"Client connected successfully, count" +
+                        $" {myTcpClients.Count} - {returnedByAccept.Client.RemoteEndPoint}"
+                        ));
 
                     TakeCareOfTCPClient(returnedByAccept);
                 }
             }
             catch(Exception excp) 
+            {
+                Debug.WriteLine(excp.ToString());
+            }
+        }
+
+        public void StopServer()
+        {
+            try 
+            {   if (myTCPListener != null)
+                {
+                    myTCPListener.Stop();
+                    // if I have a myTCPlistener instantiated then stop it. close the listener.
+                }
+                foreach (TcpClient thisTcpClient in myTcpClients)
+                {
+                    thisTcpClient.Close();
+                }
+                myTcpClients.Clear();
+            }
+            catch(Exception excp)
             {
                 Debug.WriteLine(excp.ToString());
             }
@@ -82,7 +103,7 @@ namespace JBAsyncTCPServer
                     Debug.WriteLine("**Ready to read.**");
                    int intReturned = await reader.ReadAsync(buff, 0, buff.Length);
 
-                    Debug.WriteLine("Returned:" + intReturned);
+                    Debug.WriteLine(string.Format($"Returned:" + intReturned));
                    
                     if (intReturned == 0)
                     {
@@ -94,7 +115,7 @@ namespace JBAsyncTCPServer
                     }
                     string receivedText = new string(buff);
                     
-                    Debug.WriteLine("Received: " + receivedText);
+                    Debug.WriteLine (string.Format("Received: " + receivedText));
                     // need to clear the buff array after writing/using each time otherwise it will be garbled
 
                     Array.Clear(buff, 0, buff.Length);
@@ -113,7 +134,7 @@ namespace JBAsyncTCPServer
           if(myTcpClients.Contains(paramClient))
             {
                 myTcpClients.Remove(paramClient);
-                Debug.WriteLine($"client removed, count {0} ", myTcpClients.Count);
+                Debug.WriteLine($"client removed, count {myTcpClients.Count} " );
             }
         }
         public async void SendToAll (string allMessage)

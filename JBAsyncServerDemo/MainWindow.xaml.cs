@@ -32,5 +32,20 @@ namespace JBAsyncServerDemo
         {
             myServer.StartListeningForIncomingConnection();
         }
+
+        private void btnSendAllClients_Click(object sender, RoutedEventArgs e)
+        {
+            myServer.SendToAll(txtMessageBox.Text.Trim());
+        }
+
+        private void btnStopServer_Click(object sender, RoutedEventArgs e)
+        {
+            myServer.StopServer();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            myServer.StopServer();
+        }
     }
 }

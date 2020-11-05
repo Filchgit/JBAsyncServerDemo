@@ -5,10 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JBAsyncServerDemo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" Closing="Window_Closing">
     <Grid>
-        <Button x:Name="btnAcceptIncConn" Content="Accept Incoming Connection" HorizontalAlignment="Left" Margin="84,193,0,0" VerticalAlignment="Top" Width="172" Click="btnAcceptIncConn_Click" />
-        <TextBox HorizontalAlignment="Left" Height="39" Margin="67,97,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="288"/>
+    
+        <Button x:Name="btnAcceptIncConn" Content="Accept Incoming Connection" HorizontalAlignment="Left" Margin="20,376,0,0" VerticalAlignment="Top" Width="172" Click="btnAcceptIncConn_Click" />
+        <TextBox x:Name="txtMessageBox" HorizontalAlignment="Left" Height="39" Margin="441,357,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="288" Grid.ColumnSpan="2"/>
+        <Button x:Name="btnSendAllClients" Content="Send to all clients" HorizontalAlignment="Left" Margin="206,376,0,0" VerticalAlignment="Top" Width="129" Click="btnSendAllClients_Click"/>
+        <Label Content="Message" HorizontalAlignment="Left" Margin="364,358,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnStopServer" Content="Stop Server" HorizontalAlignment="Left" Margin="20,343,0,0" VerticalAlignment="Top" Width="172" Click="btnStopServer_Click"  />
 
     </Grid>
 </Window>
