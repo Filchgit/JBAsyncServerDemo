@@ -16,7 +16,15 @@ namespace JBAsyncTCPServer
         int myPort;
         TcpListener myTCPListener;
 
-        public bool KeepRunning { get; set; } 
+        List<TcpClient> myTcpClients;
+
+        public bool KeepRunning { get; set; }
+
+        public JBSocketServer()
+        {
+            myTcpClients = new List<TcpClient>();
+        }
+        
         public async void StartListeningForIncomingConnection(IPAddress ipaddr = null, int port = 23000)
         // I need the async keyword in the method declare as I will be making an async call within it 
         {
@@ -43,7 +51,11 @@ namespace JBAsyncTCPServer
                 {
                     var returnedByAccept = await myTCPListener.AcceptTcpClientAsync();
 
-                    Debug.WriteLine("Client connected successfully." + returnedByAccept.ToString());
+                    myTcpClients.Add(returnedByAccept);
+                    //so if a new Tcp Client connects we add them to our Tcp Client List. . . . 
+
+                    Debug.WriteLine($"Client connected successfully, count {0} - {1}"
+                        ,myTcpClients.Count, returnedByAccept.Client.RemoteEndPoint);
 
                     TakeCareOfTCPClient(returnedByAccept);
                 }
@@ -67,17 +79,56 @@ namespace JBAsyncTCPServer
 
                 while(KeepRunning)
                 {
-                    Debug.WriteLine("Ready to read.");
+                    Debug.WriteLine("**Ready to read.**");
                    int intReturned = await reader.ReadAsync(buff, 0, buff.Length);
 
                     Debug.WriteLine("Returned:" + intReturned);
                    
                     if (intReturned == 0)
                     {
+                        RemoveTcpClient(paramClient);
+
                         Debug.WriteLine("Socket disconnected.");
                         //as a zero Intreturned means the stream has ended
                         break;
                     }
+                    string receivedText = new string(buff);
+                    
+                    Debug.WriteLine("Received: " + receivedText);
+                    // need to clear the buff array after writing/using each time otherwise it will be garbled
+
+                    Array.Clear(buff, 0, buff.Length);
+                }
+            }
+            catch (Exception excp)
+            {
+                RemoveTcpClient(paramClient);
+
+                Debug.WriteLine(excp.ToString());
+            }
+        }
+
+        private void RemoveTcpClient(TcpClient paramClient)
+        {
+          if(myTcpClients.Contains(paramClient))
+            {
+                myTcpClients.Remove(paramClient);
+                Debug.WriteLine($"client removed, count {0} ", myTcpClients.Count);
+            }
+        }
+        public async void SendToAll (string allMessage)
+        {
+            if (string.IsNullOrEmpty(allMessage))
+            {
+                return;
+            }
+            try 
+            {
+                byte[] buffMessage = Encoding.ASCII.GetBytes(allMessage);
+                foreach (TcpClient thisTcpClient in myTcpClients)
+                {
+                    thisTcpClient.GetStream().WriteAsync(buffMessage, 0, buffMessage.Length);
+                        //so this gets the networkstream associated with this TCP CLient and writes to it async
                 }
             }
             catch (Exception excp)
@@ -85,5 +136,6 @@ namespace JBAsyncTCPServer
                 Debug.WriteLine(excp.ToString());
             }
         }
+    
     }
 }
