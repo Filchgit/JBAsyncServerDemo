@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using JBAsyncTCPServer;
 
 namespace JBAsyncServerDemo
 {
@@ -20,9 +21,16 @@ namespace JBAsyncServerDemo
     /// </summary>
     public partial class MainWindow : Window
     {
+        JBSocketServer myServer;
         public MainWindow()
         {
             InitializeComponent();
+            myServer = new JBSocketServer();
+        }
+
+        private void btnAcceptIncConn_Click(object sender, RoutedEventArgs e)
+        {
+            myServer.StartListeningForIncomingConnection();
         }
     }
 }

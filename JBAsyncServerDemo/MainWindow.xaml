@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Button x:Name="btnAcceptIncConn" Content="Accept Incoming Connection" HorizontalAlignment="Left" Margin="84,193,0,0" VerticalAlignment="Top" Width="172" Click="btnAcceptIncConn_Click" />
+
     </Grid>
 </Window>

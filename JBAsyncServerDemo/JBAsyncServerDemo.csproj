@@ -94,5 +94,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JBAsyncTCPServer\JBAsyncTCPServer.csproj">
+      <Project>{23a28ec2-46bb-4f64-b7b0-452b3bd34b30}</Project>
+      <Name>JBAsyncTCPServer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
