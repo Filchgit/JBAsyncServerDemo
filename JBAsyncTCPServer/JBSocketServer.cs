@@ -18,13 +18,36 @@ namespace JBAsyncTCPServer
 
         List<TcpClient> myTcpClients;
 
+        public EventHandler<ClientConnectedEventArgs> RaiseClientConnectedEvent;
+        public EventHandler<TextReceivedEventArgs> RaiseTextReceivedEvent;
+
         public bool KeepRunning { get; set; }
 
         public JBSocketServer()
         {
             myTcpClients = new List<TcpClient>();
         }
-        
+
+        protected virtual void OnRaiseClientConnectedEvent(ClientConnectedEventArgs e)
+        {
+            EventHandler<ClientConnectedEventArgs> handler = RaiseClientConnectedEvent;
+
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+       protected virtual void OnRaiseTextReceivedEvent(TextReceivedEventArgs trea)
+        {
+            EventHandler<TextReceivedEventArgs> handler = RaiseTextReceivedEvent;
+
+            if (handler != null)
+            {
+                handler(this, trea);
+            }
+        }
+
+
         public async void StartListeningForIncomingConnection(IPAddress ipaddr = null, int port = 23000)
         // I need the async keyword in the method declare as I will be making an async call within it 
         {
@@ -59,6 +82,12 @@ namespace JBAsyncTCPServer
                         ));
 
                     TakeCareOfTCPClient(returnedByAccept);
+
+                    ClientConnectedEventArgs eaClientConnected;
+                    eaClientConnected = new ClientConnectedEventArgs(
+                        returnedByAccept.Client.RemoteEndPoint.ToString()
+                        );
+                    OnRaiseClientConnectedEvent(eaClientConnected);
                 }
             }
             catch(Exception excp) 
@@ -117,7 +146,10 @@ namespace JBAsyncTCPServer
                     
                     Debug.WriteLine (string.Format("Received: " + receivedText));
                     // need to clear the buff array after writing/using each time otherwise it will be garbled
-
+                    OnRaiseTextReceivedEvent(new TextReceivedEventArgs(
+                     paramClient.Client.RemoteEndPoint.ToString(),
+                     receivedText
+                        ));
                     Array.Clear(buff, 0, buff.Length);
                 }
             }

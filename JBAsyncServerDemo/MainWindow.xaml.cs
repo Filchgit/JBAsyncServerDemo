@@ -26,6 +26,8 @@ namespace JBAsyncServerDemo
         {
             InitializeComponent();
             myServer = new JBSocketServer();
+            myServer.RaiseClientConnectedEvent += HandleClientConnected;
+            myServer.RaiseTextReceivedEvent += HandleTextReceived;
         }
 
         private void btnAcceptIncConn_Click(object sender, RoutedEventArgs e)
@@ -46,6 +48,17 @@ namespace JBAsyncServerDemo
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             myServer.StopServer();
+        }
+
+        void HandleClientConnected(object sender, ClientConnectedEventArgs ccea)
+        {
+            txtConsole.AppendText($"{DateTime.Now} - New Tcp client connected : {ccea.NewClient.ToString()}  ");
+            txtConsole.AppendText(Environment.NewLine);
+        }
+        void HandleTextReceived(object sender, TextReceivedEventArgs trea )
+        {
+            txtConsole.AppendText($"{DateTime.Now} - Received from {trea.ClientThatSentText} : {trea.TextReceived}");
+            txtConsole.AppendText(Environment.NewLine);
         }
     }
 }
